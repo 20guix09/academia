@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Controle de Treinos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topo">
+    <div class="hero-content">
+      <p class="tag">GYM CONTROL</p>
+      <h1>Meu Controle de Treinos</h1>
+      <p>Monte sua rotina, acompanhe os exercícios do dia e avalie sua evolução até o final da meta.</p>
+    </div>
+    <div class="top-actions">
+      <button id="btnAjuda" class="help-btn" title="Como usar">?</button>
+      <button id="btnConfig" class="help-btn config-btn" title="Configurações">⚙</button>
+      <button id="btnTema" class="btn ghost">🌙 Tema</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card destaque">
+      <div class="section-title">
+        <div>
+          <span class="mini-title">Planejamento</span>
+          <h2>Sua meta final</h2>
+          <p class="muted">Defina o período e escreva o resultado que você espera alcançar.</p>
+        </div>
+      </div>
+
+      <form id="formMeta" class="grid meta-grid">
+        <label>
+          Data inicial
+          <input type="date" id="dataInicial" />
+        </label>
+        <label>
+          Data final
+          <input type="date" id="dataFinal" />
+        </label>
+        <label class="full">
+          Expectativa
+          <textarea id="expectativa" rows="3" placeholder="Ex: quero estar mais definido, mais magro, com mais força e melhor condicionamento..."></textarea>
+        </label>
+        <label>
+          Peso inicial (kg)
+          <input type="number" id="pesoInicial" step="0.1" placeholder="Ex: 72" />
+        </label>
+        <button class="btn primary" type="submit">Salvar meta</button>
+      </form>
+    </section>
+
+    <section class="dashboard">
+      <article class="stat card"><span id="totalTreinos">0</span><p>treinos cadastrados</p></article>
+      <article class="stat card"><span id="totalConcluidos">0</span><p>treinos concluídos</p></article>
+      <article class="stat card"><span id="mediaAvaliacao">--</span><p>média de avaliação</p></article>
+      <article class="stat card"><span id="diasRestantes">--</span><p>dias restantes</p></article>
+    </section>
+
+    <section class="layout">
+      <aside class="card treino-form-card">
+        <span class="mini-title">Cadastro</span>
+        <h2>Adicionar treino</h2>
+        <form id="formTreino" class="form-col">
+          <label>
+            Nome do treino
+            <input id="nomeTreino" placeholder="Ex: Costas + abdômen" required />
+          </label>
+          <label>
+            Dia da semana
+            <select id="diaTreino" required>
+              <option value="Segunda">Segunda</option>
+              <option value="Terça">Terça</option>
+              <option value="Quarta">Quarta</option>
+              <option value="Quinta">Quinta</option>
+              <option value="Sexta">Sexta</option>
+              <option value="Sábado">Sábado</option>
+              <option value="Domingo">Domingo</option>
+            </select>
+          </label>
+          <label>
+            Exercícios
+            <textarea id="exerciciosTreino" rows="7" placeholder="Coloque um exercício por linha.&#10;Ex:&#10;Puxada alta - 4x12&#10;Remada baixa - 4x10&#10;Abdominal infra - 3x15" required></textarea>
+          </label>
+          <button class="btn primary" type="submit">Adicionar treino</button>
+        </form>
+      </aside>
+
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <span class="mini-title">Execução</span>
+            <h2>Treino do dia</h2>
+            <p class="muted">Filtre o dia, risque os exercícios e conclua o treino.</p>
+          </div>
+          <select id="filtroDia">
+            <option value="Todos">Todos</option>
+            <option value="Segunda">Segunda</option>
+            <option value="Terça">Terça</option>
+            <option value="Quarta">Quarta</option>
+            <option value="Quinta">Quinta</option>
+            <option value="Sexta">Sexta</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
+        </div>
+        <div id="listaTreinos" class="lista-treinos"></div>
+      </section>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <span class="mini-title">Registro</span>
+          <h2>Histórico de treinos</h2>
+          <p class="muted">Veja seus treinos feitos, avaliação e observações.</p>
+        </div>
+        <button id="limparHistorico" class="btn danger">Limpar histórico</button>
+      </div>
+      <div id="historico" class="historico"></div>
+    </section>
+
+    <section id="comparacaoFinal" class="card final-card bloqueado">
+      <div class="section-title">
+        <div>
+          <span class="mini-title">Resultado</span>
+          <h2>Resultado final / comparação</h2>
+          <p id="textoBloqueio" class="muted">Essa parte aparece quando todos os treinos cadastrados forem concluídos pelo menos uma vez.</p>
+        </div>
+      </div>
+
+      <div id="conteudoFinal" class="final-content hidden">
+        <div class="comparacao-grid">
+          <div class="compare-box">
+            <strong>Expectativa inicial</strong>
+            <p id="expectativaFinalTexto">Nenhuma expectativa cadastrada.</p>
+          </div>
+          <label>
+            Peso final (kg)
+            <input type="number" id="pesoFinal" step="0.1" placeholder="Ex: 68" />
+          </label>
+          <label class="full">
+            Feedback do seu progresso
+            <textarea id="resultadoFinal" rows="4" placeholder="Escreva como foi sua evolução, o que mudou e o que você quer melhorar no próximo ciclo."></textarea>
+          </label>
+        </div>
+        <div class="resultado-actions">
+          <button id="btnAtingido" class="btn success" type="button">Meta atingida</button>
+          <button id="btnNaoAtingido" class="btn neutral" type="button">Ainda não atingi</button>
+        </div>
+        <div id="mensagemFinal" class="mensagem-final hidden"></div>
+        <button id="btnNovaMeta" class="btn primary nova-meta hidden" type="button">Salvar essa meta e começar uma nova</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="modalAjuda" class="modal hidden">
+    <div class="modal-box">
+      <button id="fecharAjuda" class="modal-close">×</button>
+      <h2>Como usar o controle de treinos</h2>
+      <ol>
+        <li>Primeiro preencha sua meta: data inicial, data final, expectativa e peso inicial.</li>
+        <li>Depois cadastre os treinos escolhendo o dia da semana.</li>
+        <li>No campo exercícios, coloque um exercício por linha.</li>
+        <li>Na parte “Treino do dia”, filtre o dia, marque os exercícios feitos e escolha uma avaliação.</li>
+        <li>Clique em “Concluir treino” para salvar no histórico.</li>
+        <li>Quando todos os treinos cadastrados forem concluídos, a comparação final será liberada.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div id="modalConfig" class="modal hidden">
+    <div class="modal-box modal-config">
+      <button id="fecharConfig" class="modal-close">×</button>
+      <h2>Configurações</h2>
+      <p class="muted">Aqui você pode ver metas finalizadas que foram salvas e excluir metas antigas.</p>
+      <button id="btnVerMetasSalvas" class="btn primary" type="button">Metas salvas</button>
+      <div id="listaMetasSalvas" class="metas-salvas hidden"></div>
+    </div>
+  </div>
+
+  <template id="templateTreino">
+    <article class="treino-item">
+      <div class="treino-head">
+        <div><h3></h3><p></p></div>
+        <button class="btn danger small remover">Excluir</button>
+      </div>
+      <div class="checklist"></div>
+      <div class="avaliacao-box">
+        <label>
+          Avaliação do dia
+          <select class="avaliacao">
+            <option value="">Selecione</option>
+            <option value="Bom">Bom</option>
+            <option value="Médio">Médio</option>
+            <option value="Ruim">Ruim</option>
+          </select>
+        </label>
+        <label>
+          Observação
+          <input class="observacao" placeholder="Ex: aumentei carga, estava cansado, fui bem..." />
+        </label>
+        <button class="btn primary concluir">Concluir treino</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
