@@ -47,6 +47,16 @@ const btnAtingido = document.getElementById("btnAtingido");
 const btnNaoAtingido = document.getElementById("btnNaoAtingido");
 const mensagemFinal = document.getElementById("mensagemFinal");
 const btnNovaMeta = document.getElementById("btnNovaMeta");
+const modalEditarTreino = document.getElementById("modalEditarTreino");
+const fecharEditarTreino = document.getElementById("fecharEditarTreino");
+const editNomeTreino = document.getElementById("editNomeTreino");
+const editDiaTreino = document.getElementById("editDiaTreino");
+const editExerciciosTreino = document.getElementById("editExerciciosTreino");
+const salvarSoEsteTreino = document.getElementById("salvarSoEsteTreino");
+const salvarTodosDia = document.getElementById("salvarTodosDia");
+let treinoEditandoId = null;
+let diaOriginalEditando = "";
+
 
 const camposMetaPrincipais = ["dataInicial", "dataFinal", "expectativa", "pesoInicial"];
 
@@ -83,7 +93,19 @@ function carregarDados() {
 
 function salvarDados(atualizar = true) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-  if (atualizar) atualizarTela();
+  if (atualizar) 
+document.addEventListener("click", () => {
+  document.querySelectorAll(".menu-opcoes").forEach(menu => menu.classList.add("hidden"));
+});
+
+fecharEditarTreino.addEventListener("click", fecharModalEditarTreino);
+modalEditarTreino.addEventListener("click", e => {
+  if (e.target === modalEditarTreino) fecharModalEditarTreino();
+});
+salvarSoEsteTreino.addEventListener("click", () => salvarEdicaoTreino(false));
+salvarTodosDia.addEventListener("click", () => salvarEdicaoTreino(true));
+
+atualizarTela();
 }
 
 function uid() {
@@ -160,6 +182,18 @@ function renderTreinos() {
       checklist.appendChild(label);
     });
 
+    const btnMenuTreino = card.querySelector(".menu-treino");
+    const menuOpcoes = card.querySelector(".menu-opcoes");
+    btnMenuTreino.addEventListener("click", event => {
+      event.stopPropagation();
+      document.querySelectorAll(".menu-opcoes").forEach(menu => {
+        if (menu !== menuOpcoes) menu.classList.add("hidden");
+      });
+      menuOpcoes.classList.toggle("hidden");
+    });
+
+    card.querySelector(".editar").addEventListener("click", () => abrirEditarTreino(treino.id));
+
     card.querySelector(".remover").addEventListener("click", () => {
       if (confirm("Tem certeza que deseja excluir esse treino?")) {
         estado.treinos = estado.treinos.filter(t => t.id !== treino.id);
@@ -200,6 +234,65 @@ function concluirTreino(treino, checklist, item) {
 
   salvarDados();
   alert("Treino concluído e salvo no histórico!");
+}
+
+
+function abrirEditarTreino(id) {
+  const treino = estado.treinos.find(item => item.id === id);
+  if (!treino) return;
+
+  treinoEditandoId = id;
+  diaOriginalEditando = treino.dia;
+  editNomeTreino.value = treino.nome;
+  editDiaTreino.value = treino.dia;
+  editExerciciosTreino.value = treino.exercicios.join("\n");
+  modalEditarTreino.classList.remove("hidden");
+  document.querySelectorAll(".menu-opcoes").forEach(menu => menu.classList.add("hidden"));
+}
+
+function fecharModalEditarTreino() {
+  modalEditarTreino.classList.add("hidden");
+  treinoEditandoId = null;
+  diaOriginalEditando = "";
+}
+
+function obterDadosEdicaoTreino() {
+  const nome = editNomeTreino.value.trim();
+  const dia = editDiaTreino.value;
+  const exercicios = editExerciciosTreino.value
+    .split("\n")
+    .map(item => item.trim())
+    .filter(Boolean);
+
+  if (!nome || !dia || exercicios.length === 0) {
+    alert("Preencha nome, dia e pelo menos um exercício.");
+    return null;
+  }
+
+  return { nome, dia, exercicios };
+}
+
+function salvarEdicaoTreino(aplicarTodosDoDia = false) {
+  if (!treinoEditandoId) return;
+  const dados = obterDadosEdicaoTreino();
+  if (!dados) return;
+
+  if (aplicarTodosDoDia) {
+    if (!confirm(`Salvar essa alteração em todos os treinos cadastrados na ${diaOriginalEditando}?`)) return;
+    estado.treinos = estado.treinos.map(treino => {
+      if (treino.dia === diaOriginalEditando) return { ...treino, ...dados };
+      return treino;
+    });
+  } else {
+    estado.treinos = estado.treinos.map(treino => {
+      if (treino.id === treinoEditandoId) return { ...treino, ...dados };
+      return treino;
+    });
+  }
+
+  fecharModalEditarTreino();
+  salvarDados();
+  alert("Treino atualizado com sucesso!");
 }
 
 function renderHistorico() {
@@ -423,5 +516,17 @@ limparHistorico.addEventListener("click", () => {
 btnAtingido.addEventListener("click", () => salvarFeedbackFinal("atingido"));
 btnNaoAtingido.addEventListener("click", () => salvarFeedbackFinal("nao"));
 btnNovaMeta.addEventListener("click", salvarMetaAtualEReiniciar);
+
+
+document.addEventListener("click", () => {
+  document.querySelectorAll(".menu-opcoes").forEach(menu => menu.classList.add("hidden"));
+});
+
+fecharEditarTreino.addEventListener("click", fecharModalEditarTreino);
+modalEditarTreino.addEventListener("click", e => {
+  if (e.target === modalEditarTreino) fecharModalEditarTreino();
+});
+salvarSoEsteTreino.addEventListener("click", () => salvarEdicaoTreino(false));
+salvarTodosDia.addEventListener("click", () => salvarEdicaoTreino(true));
 
 atualizarTela();

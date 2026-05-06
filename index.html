@@ -180,11 +180,51 @@
     </div>
   </div>
 
+  <div id="modalEditarTreino" class="modal hidden">
+    <div class="modal-box modal-editar">
+      <button id="fecharEditarTreino" class="modal-close">×</button>
+      <h2>Editar treino</h2>
+      <p class="muted">Altere o treino e escolha se quer salvar só neste treino ou aplicar para todos os treinos do mesmo dia.</p>
+      <form id="formEditarTreino" class="form-col">
+        <label>
+          Nome do treino
+          <input id="editNomeTreino" required />
+        </label>
+        <label>
+          Dia da semana
+          <select id="editDiaTreino" required>
+            <option value="Segunda">Segunda</option>
+            <option value="Terça">Terça</option>
+            <option value="Quarta">Quarta</option>
+            <option value="Quinta">Quinta</option>
+            <option value="Sexta">Sexta</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
+        </label>
+        <label>
+          Exercícios
+          <textarea id="editExerciciosTreino" rows="7" required></textarea>
+        </label>
+        <div class="edit-actions">
+          <button id="salvarSoEsteTreino" class="btn primary" type="button">Salvar só este treino</button>
+          <button id="salvarTodosDia" class="btn neutral" type="button">Salvar para todos desse dia</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <template id="templateTreino">
     <article class="treino-item">
       <div class="treino-head">
         <div><h3></h3><p></p></div>
-        <button class="btn danger small remover">Excluir</button>
+        <div class="treino-menu-wrap">
+          <button class="menu-treino" type="button" title="Opções">⋮</button>
+          <div class="menu-opcoes hidden">
+            <button class="editar" type="button">Editar</button>
+            <button class="remover" type="button">Excluir</button>
+          </div>
+        </div>
       </div>
       <div class="checklist"></div>
       <div class="avaliacao-box">
